@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ApiBackendTest extends TestCase
@@ -184,7 +185,7 @@ class ApiBackendTest extends TestCase
         // 1. Unauthenticated /admin shows login view
         $guestResponse = $this->get('/admin');
         $guestResponse->assertStatus(200);
-        $guestResponse->assertSee('REXXO BD ADMIN PORTAL');
+        $guestResponse->assertInertia(fn (Assert $page) => $page->component('Auth/AdminLogin'));
 
         // 2. Submit credentials via web form POST to /admin/login
         $loginPost = $this->post('/admin/login', [
@@ -197,6 +198,6 @@ class ApiBackendTest extends TestCase
         $this->assertAuthenticated();
         $dashboardResponse = $this->get('/admin/dashboard');
         $dashboardResponse->assertStatus(200);
-        $dashboardResponse->assertSee('EXECUTIVE DASHBOARD');
+        $dashboardResponse->assertInertia(fn (Assert $page) => $page->component('Admin/Dashboard'));
     }
 }

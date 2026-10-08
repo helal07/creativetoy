@@ -21,5 +21,14 @@ class AdminSeeder extends Seeder
                 'is_admin' => true,
             ]
         );
+
+        User::updateOrCreate(
+            ['email' => 'admin@rexxobd.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password123'),
+                'is_admin' => true,
+            ]
+        );
     }
 }

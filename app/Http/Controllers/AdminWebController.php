@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class AdminWebController extends Controller
 {
@@ -283,18 +285,18 @@ class AdminWebController extends Controller
                 File::makeDirectory($uploadsDir, 0755, true);
             }
             $file = $request->file('image');
-            $filename = 'cat_' . time() . '_' . Str::random(6) . '.webp';
-            $fullPath = $uploadsDir . '/' . $filename;
+            $filename = 'cat_'.time().'_'.Str::random(6).'.webp';
+            $fullPath = $uploadsDir.'/'.$filename;
 
             try {
-                $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->decode($file->getRealPath());
                 $image->scaleDown(width: 800);
                 $image->save($fullPath, 85);
-                $validated['image_url'] = '/uploads/categories/' . $filename;
+                $validated['image_url'] = '/uploads/categories/'.$filename;
             } catch (\Throwable $e) {
                 $file->move($uploadsDir, $filename);
-                $validated['image_url'] = '/uploads/categories/' . $filename;
+                $validated['image_url'] = '/uploads/categories/'.$filename;
             }
         }
 
@@ -316,7 +318,7 @@ class AdminWebController extends Controller
         $validated = $request->validate([
             'parent_id' => 'nullable|exists:categories,id',
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
+            'slug' => 'nullable|string|max:255|unique:categories,slug,'.$category->id,
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'image_url' => 'nullable|string|max:255',
@@ -333,18 +335,18 @@ class AdminWebController extends Controller
                 File::makeDirectory($uploadsDir, 0755, true);
             }
             $file = $request->file('image');
-            $filename = 'cat_' . time() . '_' . Str::random(6) . '.webp';
-            $fullPath = $uploadsDir . '/' . $filename;
+            $filename = 'cat_'.time().'_'.Str::random(6).'.webp';
+            $fullPath = $uploadsDir.'/'.$filename;
 
             try {
-                $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                $manager = new ImageManager(new Driver);
                 $image = $manager->decode($file->getRealPath());
                 $image->scaleDown(width: 800);
                 $image->save($fullPath, 85);
-                $validated['image_url'] = '/uploads/categories/' . $filename;
+                $validated['image_url'] = '/uploads/categories/'.$filename;
             } catch (\Throwable $e) {
                 $file->move($uploadsDir, $filename);
-                $validated['image_url'] = '/uploads/categories/' . $filename;
+                $validated['image_url'] = '/uploads/categories/'.$filename;
             }
         }
 
