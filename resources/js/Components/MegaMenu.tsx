@@ -17,7 +17,7 @@ export default function MegaMenu({ item, isOpen, onClose }: MegaMenuProps) {
   if (children.length === 0) return null;
 
   const title = (item as any).label || (item as any).name || 'Fragrance Collection';
-  const mainUrl = (item as any).url || `/perfumes?category=${(item as any).slug}`;
+  const mainUrl = (item as any).url || `/shop?category=${(item as any).slug}`;
   const description = (item as any).description || 'Master-crafted pure parfums and rare olfactory extraits.';
 
   return (
@@ -44,7 +44,7 @@ export default function MegaMenu({ item, isOpen, onClose }: MegaMenuProps) {
           <ul className="space-y-3.5">
             {children.map((child: any) => {
               const childLabel = child.label || child.name;
-              const childUrl = child.url || `/perfumes?category=${child.slug}`;
+              const childUrl = child.url || `/shop?category=${child.slug}`;
               return (
                 <li key={child.id}>
                   <Link
@@ -88,7 +88,7 @@ export default function MegaMenu({ item, isOpen, onClose }: MegaMenuProps) {
             </Link>
 
             <Link
-              href="/perfumes"
+              href="/shop"
               onClick={onClose}
               className="group block relative overflow-hidden bg-[#F5F3EF] border border-[#E5E5E5] hover:border-[#B8712E] transition-all"
             >

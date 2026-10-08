@@ -11,7 +11,7 @@ export default function Form({ campaign, products, selectedProducts }: any) {
         title: campaign.title || '',
         subtitle: campaign.subtitle || '',
         button_text: campaign.button_text || 'DISCOVER',
-        button_link: campaign.button_link || '/perfumes',
+        button_link: campaign.button_link || '/shop',
         is_active: campaign.is_active ?? true,
         product_ids: selectedProducts || [],
         banner_image: null as File | null,
@@ -128,7 +128,7 @@ export default function Form({ campaign, products, selectedProducts }: any) {
                                         value={data.button_link}
                                         onChange={e => setData('button_link', e.target.value)}
                                         className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-[14px] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
-                                        placeholder="/perfumes"
+                                        placeholder="/shop"
                                     />
                                 </div>
                             </div>

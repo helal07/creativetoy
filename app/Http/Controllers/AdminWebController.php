@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -267,6 +268,7 @@ class AdminWebController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'image_url' => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer',
         ]);
@@ -275,14 +277,36 @@ class AdminWebController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
+        if ($request->hasFile('image')) {
+            $uploadsDir = public_path('uploads/categories');
+            if (! File::exists($uploadsDir)) {
+                File::makeDirectory($uploadsDir, 0755, true);
+            }
+            $file = $request->file('image');
+            $filename = 'cat_' . time() . '_' . Str::random(6) . '.webp';
+            $fullPath = $uploadsDir . '/' . $filename;
+
+            try {
+                $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                $image = $manager->decode($file->getRealPath());
+                $image->scaleDown(width: 800);
+                $image->save($fullPath, 85);
+                $validated['image_url'] = '/uploads/categories/' . $filename;
+            } catch (\Throwable $e) {
+                $file->move($uploadsDir, $filename);
+                $validated['image_url'] = '/uploads/categories/' . $filename;
+            }
+        }
+
         if (! isset($validated['sort_order'])) {
             $validated['sort_order'] = Category::max('sort_order') + 1;
         }
 
+        unset($validated['image']);
         Category::create($validated);
         Cache::flush();
 
-        return redirect()->back()->with('success', 'Category / Subcategory added successfully.');
+        return redirect()->back()->with('success', 'Category added successfully.');
     }
 
     public function updateCategory(Request $request, $id)
@@ -292,8 +316,9 @@ class AdminWebController extends Controller
         $validated = $request->validate([
             'parent_id' => 'nullable|exists:categories,id',
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:categories,slug,'.$category->id,
+            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'image_url' => 'nullable|string|max:255',
             'sort_order' => 'nullable|integer',
         ]);
@@ -302,10 +327,32 @@ class AdminWebController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
+        if ($request->hasFile('image')) {
+            $uploadsDir = public_path('uploads/categories');
+            if (! File::exists($uploadsDir)) {
+                File::makeDirectory($uploadsDir, 0755, true);
+            }
+            $file = $request->file('image');
+            $filename = 'cat_' . time() . '_' . Str::random(6) . '.webp';
+            $fullPath = $uploadsDir . '/' . $filename;
+
+            try {
+                $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+                $image = $manager->decode($file->getRealPath());
+                $image->scaleDown(width: 800);
+                $image->save($fullPath, 85);
+                $validated['image_url'] = '/uploads/categories/' . $filename;
+            } catch (\Throwable $e) {
+                $file->move($uploadsDir, $filename);
+                $validated['image_url'] = '/uploads/categories/' . $filename;
+            }
+        }
+
+        unset($validated['image']);
         $category->update($validated);
         Cache::flush();
 
-        return redirect()->back()->with('success', 'Category / Subcategory updated successfully.');
+        return redirect()->back()->with('success', 'Category updated successfully.');
     }
 
     public function destroyCategory($id)

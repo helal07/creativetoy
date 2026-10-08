@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\FrontendContent;
 use App\Models\MenuItem;
 use App\Models\Page;
@@ -24,12 +25,14 @@ class FrontendCmsController extends Controller
         $pages = Page::all();
         $items = MenuItem::with(['children', 'parent'])->orderBy('sort_order', 'asc')->get();
         $parentItems = MenuItem::whereNull('parent_id')->orderBy('sort_order', 'asc')->get();
+        $categories = Category::orderBy('name')->get(['id', 'name', 'slug']);
 
         return Inertia::render('Admin/Cms/Index', [
             'cmsData' => $contents,
             'pagesData' => $pages,
             'menuItems' => $items,
             'parentMenuItems' => $parentItems,
+            'categories' => $categories,
         ]);
     }
 

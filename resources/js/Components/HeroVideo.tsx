@@ -17,9 +17,9 @@ export default function HeroVideo() {
   const heroSubtitle = settings.hero_subtitle || 'NEW COLLECTION';
   const heroTitle = settings.hero_title || 'Fall Winter 2026';
   const link1Text = settings.hero_link_1_text || 'FOR HER';
-  const link1Url = settings.hero_link_1_url || '/perfumes?gender=women';
+  const link1Url = settings.hero_link_1_url || '/shop?collection=new-arrivals';
   const link2Text = settings.hero_link_2_text || 'FOR HIM';
-  const link2Url = settings.hero_link_2_url || '/perfumes?gender=men';
+  const link2Url = settings.hero_link_2_url || '/shop?collection=bestsellers';
 
   // Reload video whenever the video URL in settings changes
   useEffect(() => {

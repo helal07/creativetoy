@@ -15,9 +15,10 @@ interface MenuItem {
 interface MenusProps {
     items: MenuItem[];
     parentItems: MenuItem[];
+    categories?: any[];
 }
 
-export default function Menus({ items, parentItems }: MenusProps) {
+export default function Menus({ items, parentItems, categories = [] }: MenusProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState<number | null>(null);
 
@@ -92,6 +93,46 @@ export default function Menus({ items, parentItems }: MenusProps) {
                     </h3>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* Quick Preset Selector */}
+                        <div>
+                            <label className="text-[11px] uppercase font-bold text-[#475569] tracking-wider block mb-1.5">
+                                Quick Preset (Page or Category)
+                            </label>
+                            <select
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    if (!val) return;
+                                    const [url, label] = val.split('|');
+                                    setData(prev => ({
+                                        ...prev,
+                                        url: url || prev.url,
+                                        label: isEditing ? prev.label : (label || prev.label),
+                                    }));
+                                }}
+                                defaultValue=""
+                                className="w-full border border-blue-200 bg-blue-50/50 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:border-[#0284c7] appearance-none"
+                            >
+                                <option value="">⚡ Select preset to auto-fill...</option>
+                                <optgroup label="Store Pages">
+                                    <option value="/shop|Shop All Toys">🛍️ Shop All Toys (/shop)</option>
+                                    <option value="/shop?collection=new-arrivals|New Arrivals">✨ New Arrivals (/shop?collection=new-arrivals)</option>
+                                    <option value="/shop?collection=bestsellers|Bestsellers">🏆 Bestsellers (/shop?collection=bestsellers)</option>
+                                    <option value="/shop?collection=sale|Sale 30% Off">🔥 Sale (/shop?collection=sale)</option>
+                                    <option value="/about|About Us">📖 About Us (/about)</option>
+                                    <option value="/contact|Contact Us">📞 Contact Us (/contact)</option>
+                                </optgroup>
+                                {categories.length > 0 && (
+                                    <optgroup label="Categories">
+                                        {categories.map((c: any) => (
+                                            <option key={c.id} value={`/shop?category=${c.slug}|${c.name}`}>
+                                                🧸 {c.name} (/shop?category={c.slug})
+                                            </option>
+                                        ))}
+                                    </optgroup>
+                                )}
+                            </select>
+                        </div>
+
                         <div>
                             <label className="text-[11px] uppercase font-bold text-[#475569] tracking-wider block mb-1.5">
                                 Label / Title <span className="text-rose-500">*</span>
@@ -100,7 +141,7 @@ export default function Menus({ items, parentItems }: MenusProps) {
                                 type="text"
                                 value={data.label}
                                 onChange={e => setData('label', e.target.value)}
-                                placeholder="e.g. Perfumes"
+                                placeholder="e.g. Soft Toys, Building Blocks"
                                 required
                                 className="w-full border border-[#cbd5e1] px-4 py-2.5 rounded-xl text-[13px] outline-none focus:border-[#0284c7] bg-white shadow-2xs"
                             />
@@ -115,7 +156,7 @@ export default function Menus({ items, parentItems }: MenusProps) {
                                 type="text"
                                 value={data.url}
                                 onChange={e => setData('url', e.target.value)}
-                                placeholder="e.g. /perfumes"
+                                placeholder="e.g. /shop"
                                 required
                                 className="w-full border border-[#cbd5e1] px-4 py-2.5 rounded-xl text-[13px] outline-none focus:border-[#0284c7] bg-white shadow-2xs"
                             />

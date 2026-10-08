@@ -49,7 +49,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </Link>
 
             <Link
-              href="/perfumes"
+              href="/shop"
               className={`flex flex-col items-center gap-0.5 transition-colors ${
                 isShop ? 'text-[#FF705A]' : 'text-slate-500 hover:text-slate-800'
               }`}
@@ -61,7 +61,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </Link>
 
             <Link
-              href="/perfumes"
+              href="/shop"
               className="flex flex-col items-center gap-0.5 text-slate-500 hover:text-slate-800 transition-colors"
             >
               <div className="p-1">
@@ -71,7 +71,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </Link>
 
             <Link
-              href="/perfumes?collection=favorites"
+              href="/shop?collection=bestsellers"
               className="flex flex-col items-center gap-0.5 text-slate-500 hover:text-slate-800 transition-colors"
             >
               <div className="p-1">

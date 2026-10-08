@@ -148,7 +148,7 @@ export default function HomePage({
               {/* Action Buttons */}
               <div className="flex items-center gap-4 pt-2">
                 <Link
-                  href="/perfumes"
+                  href="/shop"
                   className="bg-[#FF705A] hover:bg-[#F05D46] text-white px-8 py-3.5 rounded-full font-bold text-[14px] shadow-md shadow-[#FF705A]/30 hover:shadow-lg active:scale-95 transition-all flex items-center gap-2"
                 >
                   <span>SHOP NOW</span>
@@ -156,7 +156,7 @@ export default function HomePage({
                 </Link>
 
                 <Link
-                  href="/perfumes?category=wooden-toys"
+                  href="/shop?category=wooden-toys"
                   className="bg-white hover:bg-slate-50 text-slate-800 px-6 py-3.5 rounded-full font-bold text-[14px] shadow-xs border border-slate-200 hover:border-slate-300 transition-all"
                 >
                   Explore Montessori
@@ -216,7 +216,7 @@ export default function HomePage({
           {/* Shop Now Pill Button */}
           <div>
             <Link
-              href="/perfumes"
+              href="/shop"
               className="inline-block bg-[#FF705A] active:bg-[#F05D46] text-white px-7 py-2.5 rounded-full font-bold text-[13px] shadow-md shadow-[#FF705A]/30 transition-transform active:scale-95"
             >
               SHOP NOW
@@ -252,7 +252,7 @@ export default function HomePage({
           {categoriesList.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/perfumes?category=${cat.slug}`}
+              href={`/shop?category=${cat.slug}`}
               className="flex flex-col items-center group cursor-pointer"
             >
               {/* Circle Icon Container */}
@@ -289,7 +289,7 @@ export default function HomePage({
           </div>
 
           <Link
-            href="/perfumes"
+            href="/shop"
             className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-bold text-[#FF705A] hover:text-[#F05D46] transition-colors"
           >
             <span>View All Toys</span>
@@ -307,7 +307,7 @@ export default function HomePage({
         {/* Mobile View All Button */}
         <div className="sm:hidden text-center pt-6">
           <Link
-            href="/perfumes"
+            href="/shop"
             className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-800 px-6 py-2.5 rounded-full text-[13px] font-bold shadow-xs active:bg-slate-50"
           >
             <span>Explore All Toys</span>
@@ -331,7 +331,7 @@ export default function HomePage({
             </p>
             <div className="pt-2">
               <Link
-                href="/perfumes?category=wooden-toys"
+                href="/shop?category=wooden-toys"
                 className="inline-flex items-center gap-2 bg-white text-[#FF705A] hover:bg-slate-50 px-8 py-3.5 rounded-full font-bold text-[14px] shadow-md transition-all active:scale-95"
               >
                 <span>SHOP WOODEN COLLECTION</span>
@@ -361,7 +361,7 @@ export default function HomePage({
             </div>
 
             <Link
-              href="/perfumes?collection=new-arrivals"
+              href="/shop?collection=new-arrivals"
               className="text-[13px] font-bold text-[#0FB5BA] hover:underline"
             >
               See What's New →

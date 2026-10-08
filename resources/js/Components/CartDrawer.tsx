@@ -92,7 +92,7 @@ export default function CartDrawer() {
                   </p>
                 </div>
                 <Link
-                  href="/perfumes"
+                  href="/shop"
                   onClick={closeCart}
                   className="bg-[#FF705A] hover:bg-[#F05D46] text-white px-8 py-3 rounded-full text-[13px] font-bold shadow-md shadow-[#FF705A]/30 transition-all cursor-pointer"
                 >

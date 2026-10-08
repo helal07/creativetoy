@@ -195,7 +195,7 @@ export default function AdminLayout({
                 <div className="flex items-center gap-2 sm:gap-4">
                     {/* Storefront Link */}
                     <a
-                        href="/perfumes"
+                        href="/"
                         target="_blank"
                         rel="noreferrer"
                         className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#f8fafc] hover:bg-[#f1f5f9] border border-[#cbd5e1] text-[#475569] hover:text-[#0284c7] rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-2xs"

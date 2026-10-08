@@ -60,7 +60,7 @@ Route::get('/checkout', function () {
 });
 Route::get('/pages/{slug}', [PageController::class, 'show'])->name('page.show');
 
-Route::get('/perfumes', function (Request $request) {
+Route::get('/shop', function (Request $request) {
     $query = Product::with(['images', 'category.parent']);
     $isFallback = false;
 
@@ -120,18 +120,19 @@ Route::get('/perfumes', function (Request $request) {
         $isFallback = true;
     }
 
-    return Inertia::render('Perfumes', [
+    return Inertia::render('Shop', [
         'products' => $products,
         'filters' => $request->all(),
         'isFallback' => $isFallback,
     ]);
-});
+})->name('shop');
 
 Route::get('/toys', function (Request $request) {
-    return redirect('/perfumes'.($request->getQueryString() ? '?'.$request->getQueryString() : ''));
+    return redirect('/shop'.($request->getQueryString() ? '?'.$request->getQueryString() : ''));
 });
-Route::get('/shop', function (Request $request) {
-    return redirect('/perfumes'.($request->getQueryString() ? '?'.$request->getQueryString() : ''));
+
+Route::get('/perfumes', function (Request $request) {
+    return redirect('/shop'.($request->getQueryString() ? '?'.$request->getQueryString() : ''));
 });
 Route::get('/product/{slug}', function ($slug) {
     $product = Product::with(['images', 'category.parent', 'variants'])->where('slug', $slug)->firstOrFail();

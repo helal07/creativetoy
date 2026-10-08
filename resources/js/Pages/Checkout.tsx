@@ -392,7 +392,7 @@ export default function CheckoutPage() {
               </button>
 
               <Link
-                href="/perfumes"
+                href="/shop"
                 className="flex-1 bg-[#FF705A] hover:bg-[#F05D46] text-white py-3.5 rounded-full text-[12px] uppercase font-bold tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-[#FF705A]/25 cursor-pointer"
               >
                 CONTINUE SHOPPING TOYS
@@ -419,7 +419,7 @@ export default function CheckoutPage() {
             </p>
           </div>
           <Link
-            href="/perfumes"
+            href="/shop"
             className="inline-block bg-[#FF705A] hover:bg-[#F05D46] text-white px-8 py-3.5 rounded-full text-[13px] uppercase font-bold tracking-wider shadow-md shadow-[#FF705A]/30 transition-all cursor-pointer"
           >
             START SHOPPING TOYS

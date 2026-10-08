@@ -16,9 +16,10 @@ interface CmsProps {
     pagesData?: any[];
     menuItems?: any[];
     parentMenuItems?: any[];
+    categories?: any[];
 }
 
-export default function CmsIndex({ cmsData = {}, pagesData = [], menuItems = [], parentMenuItems = [] }: CmsProps) {
+export default function CmsIndex({ cmsData = {}, pagesData = [], menuItems = [], parentMenuItems = [], categories = [] }: CmsProps) {
     const [activeTab, setActiveTab] = useState('global');
 
     // Flatten initial data for the form
@@ -42,18 +43,18 @@ export default function CmsIndex({ cmsData = {}, pagesData = [], menuItems = [],
             subtitle: 'Silhouettes redefined with intricate artisan craftsmanship.',
             banner_image: null,
             button_text: 'DISCOVER',
-            button_link: '/perfumes'
+            button_link: '/shop'
         },
         maison_stories: {
             story1_category: 'CAMPAIGN',
             story1_title: 'Artisan Perfumery Collection',
             story1_image: null,
-            story1_url: '/perfumes',
+            story1_url: '/shop',
             
             story2_category: 'SHOWCASE',
             story2_title: 'Discover Exquisite Notes',
             story2_image: null,
-            story2_url: '/perfumes',
+            story2_url: '/shop',
             
             story3_category: 'BEHIND THE SCENES',
             story3_title: 'The Making of Luxury',
@@ -306,7 +307,7 @@ export default function CmsIndex({ cmsData = {}, pagesData = [], menuItems = [],
                         )}
 
                         {activeTab === 'menus' && (
-                            <MenuBuilder items={menuItems} parentItems={parentMenuItems} />
+                            <MenuBuilder items={menuItems} parentItems={parentMenuItems} categories={categories} />
                         )}
                     </div>
                 </div>

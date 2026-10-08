@@ -14,7 +14,7 @@ export default function ProductDetailPage({ product, related }: any) {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-24 text-center">
         <Head title={`Toy Not Found — ${brandName}`} />
         <h1 className="text-[28px] font-black text-slate-800 mb-4">Toy not found.</h1>
-        <a href="/perfumes" className="text-[13px] uppercase font-bold text-[#FF705A] underline">
+        <a href="/shop" className="text-[13px] uppercase font-bold text-[#FF705A] underline">
           RETURN TO CATALOG →
         </a>
       </div>
