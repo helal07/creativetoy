@@ -209,7 +209,11 @@ class AdminWebController extends Controller
 
     public function settings()
     {
-        return Inertia::render('Admin/Settings/Index');
+        $siteSettings = Setting::all()->pluck('value', 'key')->toArray();
+
+        return Inertia::render('Admin/Settings/Index', [
+            'siteSettings' => $siteSettings,
+        ]);
     }
 
     public function apiPayment()

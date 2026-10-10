@@ -81,14 +81,24 @@ export default function Header({ initialMenu, initialCategories }: HeaderProps) 
     }
   };
 
+  // Announcement bar visibility and content
+  const rawAnnouncementEnabled = settings.announcement_enabled !== undefined 
+    ? settings.announcement_enabled 
+    : pageProps.siteSettings?.announcement_enabled;
+  const isAnnouncementEnabled = rawAnnouncementEnabled !== false && rawAnnouncementEnabled !== '0' && rawAnnouncementEnabled !== 0 && rawAnnouncementEnabled !== 'false';
+  const announcementText = (pageProps.siteSettings?.announcement || settings.announcement || '').trim();
+  const showAnnouncement = isAnnouncementEnabled && announcementText.length > 0;
+
   return (
     <>
       {/* ── 1. Top Colorful Announcement Bar ── */}
-      <div className="bg-gradient-to-r from-[#FF705A] via-[#FFB703] to-[#0FB5BA] text-white py-1.5 px-4 text-center text-[11px] sm:text-[12px] font-bold tracking-wide shadow-xs relative z-50 flex items-center justify-center gap-2">
-        <Sun size={14} className="animate-spin duration-3000 text-yellow-100 hidden sm:inline" />
-        <span>{settings.announcement || '🎉 SUMMER FUN SALE! 30% OFF ALL TOYS · FREE SHIPPING OVER $35! 🧸'}</span>
-        <Sparkles size={13} className="text-yellow-100 hidden sm:inline" />
-      </div>
+      {showAnnouncement && (
+        <div className="bg-gradient-to-r from-[#FF705A] via-[#FFB703] to-[#0FB5BA] text-white py-1.5 px-4 text-center text-[11px] sm:text-[12px] font-bold tracking-wide shadow-xs relative z-50 flex items-center justify-center gap-2">
+          <Sun size={14} className="animate-spin duration-3000 text-yellow-100 hidden sm:inline" />
+          <span>{announcementText}</span>
+          <Sparkles size={13} className="text-yellow-100 hidden sm:inline" />
+        </div>
+      )}
 
       {/* ── 2. Main Navigation Header Bar ── */}
       <header className="sticky top-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.04)]">

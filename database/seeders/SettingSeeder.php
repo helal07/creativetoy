@@ -25,6 +25,7 @@ class SettingSeeder extends Seeder
             'currency' => 'USD ($)',
             'currency_symbol' => '$',
             'announcement' => '🎉 SUMMER FUN SALE! 30% OFF ALL TOYS · FREE SHIPPING OVER $35! 🧸',
+            'announcement_enabled' => '1',
             'footerText' => 'Creative Toy Ltd. All Rights Reserved.',
             'tax_rate' => '0',
             'facebook_url' => 'https://facebook.com/creativetoy',

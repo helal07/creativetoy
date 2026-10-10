@@ -24,6 +24,7 @@ export interface SiteSettings {
   email: string;
   currency: string;
   announcement: string;
+  announcement_enabled?: boolean | string | number;
   footerText: string;
   [key: string]: any;
 }
@@ -48,6 +49,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   email: 'creativetoyltd@gmail.com',
   currency: 'USD ($)',
   announcement: '🎉 SUMMER FUN SALE! 30% OFF ALL TOYS · FREE SHIPPING OVER $35! 🧸',
+  announcement_enabled: '1',
   footerText: 'Creative Toy Ltd. All Rights Reserved.',
 };
 
