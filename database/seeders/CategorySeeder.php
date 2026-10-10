@@ -12,69 +12,83 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        if (Category::count() > 0) {
-            return; // Safe policy: Never overwrite existing categories
-        }
+        // Clean up legacy perfume categories if present
+        Category::whereIn('slug', [
+            'men-perfumes', 'women-perfumes', 'unisex-rare-oud', 'gifts-sets', 'iconic-editions',
+            'men-eau-de-parfum', 'men-parfum-extraits', 'woody-leather', 'fresh-citrus',
+            'floral-rose', 'amber-vanilla', 'women-parfum-extraits', 'gourmand-musk',
+            'rare-oud', 'incense-resins', 'private-reserve', 'discovery-quads', 'gift-coffrets',
+            'pocket-atomizers', 'alchemy-series', 'night-flacons',
+        ])->delete();
+
         $categoriesStructure = [
             [
-                'name' => 'Men Perfumes',
-                'slug' => 'men-perfumes',
-                'description' => 'Architectural, smoky, leather, and wood extraits crafted for refined presence.',
-                'image_url' => 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=800&q=80',
+                'name' => 'Soft Toys',
+                'slug' => 'soft-toys',
+                'description' => 'Cuddly plush teddy bears, animal friends, and plush baby dolls.',
+                'image_url' => '/images/toys/mr_cuddles_bear.jpg',
                 'sort_order' => 1,
                 'subcategories' => [
-                    ['name' => 'Eau de Parfum', 'slug' => 'men-eau-de-parfum', 'description' => 'Concentrated daily signature fragrances.'],
-                    ['name' => 'Parfum Extraits', 'slug' => 'men-parfum-extraits', 'description' => 'Pure extrait strength with lasting 24-hour sillage.'],
-                    ['name' => 'Woody & Smoked Leather', 'slug' => 'woody-leather', 'description' => 'Birch tar, cade wood, and dark cocoa.'],
-                    ['name' => 'Fresh Citrus & Vetiver', 'slug' => 'fresh-citrus', 'description' => 'Calabrian bergamot and crisp Haitian vetiver.'],
+                    ['name' => 'Teddy Bears', 'slug' => 'teddy-bears', 'description' => 'Soft huggable plush bears.'],
+                    ['name' => 'Plush Animals', 'slug' => 'plush-animals', 'description' => 'Adorable woodland and jungle plush friends.'],
+                    ['name' => 'Baby Comforters', 'slug' => 'baby-comforters', 'description' => 'Ultra-soft security blankets and cuddle cloths.'],
                 ],
             ],
             [
-                'name' => 'Women Perfumes',
-                'slug' => 'women-perfumes',
-                'description' => 'Sculpted florals, velvet damask roses, and warm liquid amber vapor.',
-                'image_url' => 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=800&q=80',
+                'name' => 'Wooden Toys',
+                'slug' => 'wooden-toys',
+                'description' => 'Natural organic beech wood stacking rings, puzzles, and sensory blocks.',
+                'image_url' => '/images/toys/rainbow_stacking_ring.jpg',
                 'sort_order' => 2,
                 'subcategories' => [
-                    ['name' => 'Floral & Damask Rose', 'slug' => 'floral-rose', 'description' => 'Rare May roses harvested at dawn.'],
-                    ['name' => 'Amber & Bourbon Vanilla', 'slug' => 'amber-vanilla', 'description' => 'Golden resinous amber tempered by Madagascar vanilla.'],
-                    ['name' => 'Parfum Extraits', 'slug' => 'women-parfum-extraits', 'description' => 'Pure luxury extraits in heavy crystal flacons.'],
-                    ['name' => 'Gourmand & White Musk', 'slug' => 'gourmand-musk', 'description' => 'Silken musk and delicate honey accords.'],
+                    ['name' => 'Stacking Rings', 'slug' => 'stacking-rings', 'description' => 'Rainbow stacking towers and ring pyramids.'],
+                    ['name' => 'Wooden Puzzles', 'slug' => 'wooden-puzzles', 'description' => 'Peg puzzles and shape matching boards.'],
+                    ['name' => 'Activity Cubes', 'slug' => 'activity-cubes', 'description' => 'Multi-sided sensory and maze cubes.'],
                 ],
             ],
             [
-                'name' => 'Unisex & Rare Oud',
-                'slug' => 'unisex-rare-oud',
-                'description' => 'Genderless high-perfumery blending rare agarwood, mineral incense, and crystalline musks.',
-                'image_url' => 'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&w=800&q=80',
+                'name' => 'Building Blocks',
+                'slug' => 'build-blocks',
+                'description' => 'Stacking cubes, magnetic tiles, and creative construction sets.',
+                'image_url' => '/images/toys/stacking_blocks.jpg',
                 'sort_order' => 3,
                 'subcategories' => [
-                    ['name' => 'Cambodian & Laotian Oud', 'slug' => 'rare-oud', 'description' => 'Aged wild agarwood extractions.'],
-                    ['name' => 'Incense & Silver Resins', 'slug' => 'incense-resins', 'description' => 'Translucent Oman frankincense and cold vapor.'],
-                    ['name' => 'Private Reserve Flacons', 'slug' => 'private-reserve', 'description' => 'Limited vintage batches numbered by hand.'],
+                    ['name' => 'Stacking Cubes', 'slug' => 'stacking-cubes', 'description' => 'Geometric wooden stacking cubes and balance blocks.'],
+                    ['name' => 'Magnetic Tiles', 'slug' => 'magnetic-tiles', 'description' => 'Translucent 3D magnetic building shapes.'],
                 ],
             ],
             [
-                'name' => 'Gifts & Sets',
-                'slug' => 'gifts-sets',
-                'description' => 'Curated discovery sets and luxury coffrets housed in hard-edged papercraft gift cases.',
-                'image_url' => 'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&w=800&q=80',
+                'name' => 'Dolls & Dollhouses',
+                'slug' => 'dolls',
+                'description' => 'Miniature dollhouses, baby dolls, and accessories.',
+                'image_url' => '/images/toys/wooden_dollhouse.jpg',
                 'sort_order' => 4,
                 'subcategories' => [
-                    ['name' => 'Discovery Quads', 'slug' => 'discovery-quads', 'description' => 'Four 15ml refillable glass atomizers.'],
-                    ['name' => 'Luxury Gift Coffrets', 'slug' => 'gift-coffrets', 'description' => 'Signature 100ml flacon with travel leather case.'],
-                    ['name' => 'Pocket Atomizers', 'slug' => 'pocket-atomizers', 'description' => 'Solid brass and leather pocket sprays.'],
+                    ['name' => 'Dollhouses', 'slug' => 'dollhouses', 'description' => 'Multi-story wooden dollhouses with furnishings.'],
+                    ['name' => 'Baby Dolls', 'slug' => 'baby-dolls', 'description' => 'Soft body baby dolls and stroller sets.'],
                 ],
             ],
             [
-                'name' => 'Iconic Editions',
-                'slug' => 'iconic-editions',
-                'description' => 'Master collections inspired by haute couture silhouette and sculptural glasscraft.',
-                'image_url' => 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
+                'name' => 'Outdoor & Play',
+                'slug' => 'outdoor',
+                'description' => 'Friction-powered vehicles, play cars, and garden fun.',
+                'image_url' => '/images/toys/toy_car.jpg',
                 'sort_order' => 5,
                 'subcategories' => [
-                    ['name' => 'The Alchemy Series', 'slug' => 'alchemy-series', 'description' => 'Dark amber glass flacons with gold-etched typography.'],
-                    ['name' => 'Night Flacons', 'slug' => 'night-flacons', 'description' => 'Deep obsidian glass designed for evening intensity.'],
+                    ['name' => 'Toy Vehicles', 'slug' => 'toy-vehicles', 'description' => 'Friction cars, trains, and rescue vehicles.'],
+                    ['name' => 'Water Tables', 'slug' => 'water-tables', 'description' => 'Sensory water tables and outdoor splash toys.'],
+                    ['name' => 'Bicycles & Trikes', 'slug' => 'bicycles-trikes', 'description' => 'Balance bikes, trikes, and scooters.'],
+                ],
+            ],
+            [
+                'name' => 'Learning & STEM',
+                'slug' => 'learn-stem',
+                'description' => 'Brain teasers, science sets, and prehistoric dinosaur figures.',
+                'image_url' => '/images/toys/dinosaur_playset.jpg',
+                'sort_order' => 6,
+                'subcategories' => [
+                    ['name' => 'Dinosaur Playsets', 'slug' => 'dinosaur-playsets', 'description' => 'Prehistoric action figures and playmats.'],
+                    ['name' => 'Math & Counting', 'slug' => 'math-counting', 'description' => 'Abacus, number cards, and balance scales.'],
                 ],
             ],
         ];

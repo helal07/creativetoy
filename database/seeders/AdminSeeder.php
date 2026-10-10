@@ -13,22 +13,22 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'email2itsolution@gmail.com'],
-            [
-                'name' => 'Admin',
-                'password' => Hash::make('password123'),
-                'is_admin' => true,
-            ]
-        );
+        $admins = [
+            'email2itsolution@gmail.com',
+            'creativetoyltd@gmail.com',
+            'admin@creativetoy.store',
+            'admin@admin.com',
+        ];
 
-        User::updateOrCreate(
-            ['email' => 'email2itsolution@gmail.com'],
-            [
-                'name' => 'Admin',
-                'password' => Hash::make('password123'),
-                'is_admin' => true,
-            ]
-        );
+        foreach ($admins as $email) {
+            User::updateOrCreate(
+                ['email' => $email],
+                [
+                    'name' => 'Admin',
+                    'password' => Hash::make('password123'),
+                    'is_admin' => true,
+                ]
+            );
+        }
     }
 }
