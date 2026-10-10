@@ -6,10 +6,11 @@ deployment:
     - /usr/bin/rsync -av --exclude='.git' --exclude='.env' --exclude='storage/app/public' . $DEPLOYPATH
     - /bin/chmod -R 775 $DEPLOYPATH/storage $DEPLOYPATH/bootstrap/cache
     - /bin/chmod -R 755 $DEPLOYPATH/public
-    - /usr/local/bin/php $DEPLOYPATH/artisan optimize:clear
-    - /usr/local/bin/php $DEPLOYPATH/artisan migrate --force
-    - /usr/local/bin/php $DEPLOYPATH/artisan storage:link
-    - /usr/local/bin/php $DEPLOYPATH/artisan config:cache
-    - /usr/local/bin/php $DEPLOYPATH/artisan route:cache
-    - /usr/local/bin/php $DEPLOYPATH/artisan view:cache
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || which php 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan optimize:clear
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan migrate --force
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan storage:link
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan config:cache
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan route:cache
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan view:cache
+
 
