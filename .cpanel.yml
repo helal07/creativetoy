@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/itsoluti/raaxodubai.com
+    - export DEPLOYPATH=/home/itsoluti/creativetoy.store
     - /bin/mkdir -p $DEPLOYPATH
     - /usr/bin/rsync -av --exclude='.git' --exclude='.env' --exclude='storage/app/public' . $DEPLOYPATH
     - /bin/chmod -R 775 $DEPLOYPATH/storage $DEPLOYPATH/bootstrap/cache
