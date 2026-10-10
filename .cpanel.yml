@@ -8,6 +8,7 @@ deployment:
     - /bin/chmod -R 755 $DEPLOYPATH/public
     - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || which php 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan optimize:clear
     - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan migrate --force
+    - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan db:seed --force
     - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan storage:link
     - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan config:cache
     - PHP_CLI=$(which ea-php83 2>/dev/null || which /usr/local/bin/ea-php83 2>/dev/null || which php83 2>/dev/null || echo "/usr/local/bin/php"); $PHP_CLI $DEPLOYPATH/artisan route:cache

@@ -340,6 +340,8 @@ $runMigrationHandler = function (Request $request) {
         DB::connection()->getPdo();
         $logs[] = "[OK] Database connection successful ($dbDriver://$dbHost/$dbName)";
 
+        $isSeedOnlyRoute = in_array($request->path(), ['run-seed', 'db-seed']) || $request->has('seed_only');
+
         if ($request->has('clear')) {
             Artisan::call('optimize:clear');
             $logs[] = "--- optimize:clear ---\n".trim(Artisan::output());
@@ -356,13 +358,40 @@ $runMigrationHandler = function (Request $request) {
         } elseif ($request->has('storage')) {
             Artisan::call('storage:link');
             $logs[] = "--- storage:link ---\n".trim(Artisan::output());
+        } elseif ($isSeedOnlyRoute) {
+            // Standalone Seeding Flow
+            $seedParams = ['--force' => true];
+            if ($request->filled('class')) {
+                $seedClass = $request->input('class');
+                if (! str_contains($seedClass, '\\')) {
+                    $seedClass = 'Database\\Seeders\\'.$seedClass;
+                }
+                $seedParams['--class'] = $seedClass;
+                $logs[] = "--- db:seed --class={$seedClass} --force ---";
+            } else {
+                $logs[] = '--- db:seed --force ---';
+            }
+
+            Artisan::call('db:seed', $seedParams);
+            $logs[] = trim(Artisan::output()) ?: 'Database seeding completed successfully.';
+
+            Artisan::call('optimize:clear');
+            $logs[] = "--- optimize:clear ---\n".trim(Artisan::output());
         } else {
             // Standard migration flow
             Artisan::call('migrate', ['--force' => true]);
             $logs[] = "--- migrate --force ---\n".trim(Artisan::output());
 
             if ($request->has('seed')) {
-                Artisan::call('db:seed', ['--force' => true]);
+                $seedParams = ['--force' => true];
+                if ($request->filled('class')) {
+                    $seedClass = $request->input('class');
+                    if (! str_contains($seedClass, '\\')) {
+                        $seedClass = 'Database\\Seeders\\'.$seedClass;
+                    }
+                    $seedParams['--class'] = $seedClass;
+                }
+                Artisan::call('db:seed', $seedParams);
                 $logs[] = "--- db:seed --force ---\n".trim(Artisan::output());
             }
 
@@ -380,18 +409,18 @@ $runMigrationHandler = function (Request $request) {
 
     $logOutput = htmlspecialchars(implode("\n\n", array_filter($logs)));
     $statusColor = $hasError ? '#ef4444' : '#10b981';
-    $statusTitle = $hasError ? 'Migration / Database Error Encountered' : 'Database & Migrations Ready!';
+    $statusTitle = $hasError ? 'Database Operation Error' : 'Database Ready & Operational';
 
     return response('<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cPanel Database Migration Hub | Creative Toy</title>
+    <title>Database Migration & Seeding Hub | Creative Toy</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #0b0f19; color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; min-height: 100vh; padding: 32px 16px; }
-        .container { max-width: 860px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
         .card { background: #131b2e; border: 1px solid #1e293b; border-radius: 12px; padding: 28px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
         .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #1e293b; padding-bottom: 16px; flex-wrap: wrap; gap: 12px; }
         .title { font-size: 20px; font-weight: 700; color: #f8fafc; }
@@ -408,10 +437,13 @@ $runMigrationHandler = function (Request $request) {
         .btn-primary:hover { background: #1d4ed8; }
         .btn-success { background: #059669; color: #fff; }
         .btn-success:hover { background: #047857; }
+        .btn-purple { background: #7c3aed; color: #fff; }
+        .btn-purple:hover { background: #6d28d9; }
         .btn-dark { background: #1e293b; color: #cbd5e1; border-color: #334155; }
         .btn-dark:hover { background: #334155; color: #fff; }
         .btn-secondary { background: #475569; color: #fff; }
         .btn-secondary:hover { background: #334155; }
+        .info-callout { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #93c5fd; }
         .terminal-header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 8px 16px; font-size: 12px; color: #94a3b8; font-family: ui-monospace, monospace; border: 1px solid #1e293b; border-bottom: none; }
         pre { background: #030712; color: #4ade80; border: 1px solid #1e293b; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; padding: 16px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; max-height: 480px; }
         .links-bar { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #1e293b; font-size: 14px; flex-wrap: gap: 12px; }
@@ -425,7 +457,7 @@ $runMigrationHandler = function (Request $request) {
         <div class="header">
             <div>
                 <h1 class="title">'.$statusTitle.'</h1>
-                <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">cPanel Deployment & Database Automation Utility</p>
+                <p style="font-size: 13px; color: #94a3b8; margin-top: 4px;">cPanel Deployment, Migration & Seeding Utility</p>
             </div>
             <div class="badge">
                 <span class="status-dot"></span>
@@ -448,10 +480,16 @@ $runMigrationHandler = function (Request $request) {
             </div>
         </div>
 
-        <div class="actions-label">Deployment Actions</div>
+        <div class="info-callout">
+            <strong>Default Admin Credentials:</strong> <code>admin@admin.com</code> or <code>admin@rexxobd.com</code> | Password: <code>password123</code>
+        </div>
+
+        <div class="actions-label">Database Actions</div>
         <div class="btn-group">
             <a href="/run-migration" class="btn btn-primary">&#9654; Run Migrations</a>
-            <a href="/run-migration?seed=1" class="btn btn-success">&#127793; Run Migrations & Seed</a>
+            <a href="/run-seed?class=AdminSeeder" class="btn btn-purple">&#128100; Seed Admin Only</a>
+            <a href="/run-seed" class="btn btn-success">&#127793; Seed All (Admin + Data)</a>
+            <a href="/run-migration?seed=1" class="btn btn-primary">&#9889; Migrations & Seed All</a>
             <a href="/run-migration?status=1" class="btn btn-dark">&#128202; Migration Status</a>
             <a href="/run-migration?clear=1" class="btn btn-dark">&#129529; Clear Cache (optimize:clear)</a>
             <a href="/run-migration?cache=1" class="btn btn-dark">&#9889; Cache Routes & Config</a>
@@ -483,4 +521,6 @@ Route::withoutMiddleware([
 ])->group(function () use ($runMigrationHandler) {
     Route::match(['get', 'post'], '/run-migration', $runMigrationHandler)->name('run-migration');
     Route::match(['get', 'post'], '/run-migrations', $runMigrationHandler)->name('run-migrations');
+    Route::match(['get', 'post'], '/run-seed', $runMigrationHandler)->name('run-seed');
+    Route::match(['get', 'post'], '/db-seed', $runMigrationHandler)->name('db-seed');
 });
