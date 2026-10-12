@@ -36,7 +36,7 @@ export default function HomePage({
     cmsData?.home_hero?.hero_video_url ||
     settings?.hero_video_url ||
     settings?.hero_video ||
-    '/uploads/videos/hero_clip_1785931997.mp4';
+    '/uploads/cms/home_hero_hero_video_url_1791801930.mp4';
   const heroPoster =
     settings?.hero_poster_url ||
     settings?.hero_poster ||

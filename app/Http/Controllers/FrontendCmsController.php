@@ -46,6 +46,23 @@ class FrontendCmsController extends Controller
             File::makeDirectory($uploadsDir, 0755, true);
         }
 
+        // Verify that any attempted file uploads didn't fail due to server size limits
+        foreach ($request->allFiles() as $secKey => $subFiles) {
+            if (is_array($subFiles)) {
+                foreach ($subFiles as $subKey => $uploadedFile) {
+                    if ($uploadedFile && ! $uploadedFile->isValid()) {
+                        return redirect()->back()->withErrors([
+                            "$secKey.$subKey" => "Upload failed for {$subKey}: ".$uploadedFile->getErrorMessage().'. Check server upload size limits.',
+                        ]);
+                    }
+                }
+            } elseif ($subFiles && ! $subFiles->isValid()) {
+                return redirect()->back()->withErrors([
+                    $secKey => 'Upload failed: '.$subFiles->getErrorMessage().'. Check server upload size limits.',
+                ]);
+            }
+        }
+
         foreach ($data as $section => $fields) {
             if (! is_array($fields)) {
                 continue;

@@ -12,8 +12,8 @@ export default function HeroVideo() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [videoError, setVideoError] = useState(false);
 
-  const videoUrl = settings.hero_video_url || settings.hero_video || 'https://assets.mixkit.co/videos/preview/mixkit-perfume-bottle-in-a-dark-environment-42525-large.mp4';
-  const posterUrl = settings.hero_poster_url || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=2400&q=90';
+  const videoUrl = settings.hero_video_url || settings.hero_video || '/uploads/cms/home_hero_hero_video_url_1791801930.mp4';
+  const posterUrl = settings.hero_poster_url || '/images/toys/hero_banner.jpg';
   const heroSubtitle = settings.hero_subtitle || 'NEW COLLECTION';
   const heroTitle = settings.hero_title || 'Fall Winter 2026';
   const link1Text = settings.hero_link_1_text || 'FOR HER';

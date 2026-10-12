@@ -37,6 +37,16 @@ class SettingController extends Controller
         $videoUploaded = false;
         $posterUploaded = false;
 
+        // Check for upload errors before processing
+        foreach (['hero_video_file', 'hero_video', 'logo_file', 'site_logo', 'favicon_file', 'site_favicon', 'hero_poster_file', 'hero_poster'] as $fileInput) {
+            $f = $request->file($fileInput);
+            if ($f && ! $f->isValid()) {
+                return redirect()->back()->withErrors([
+                    $fileInput => 'File upload error: '.$f->getErrorMessage().'. Check server upload size limits.',
+                ]);
+            }
+        }
+
         // Handle Site Logo File Upload
         if ($request->hasFile('logo_file') || $request->hasFile('site_logo')) {
             $file = $request->file('logo_file') ?? $request->file('site_logo');
@@ -147,6 +157,15 @@ class SettingController extends Controller
                     continue;
                 }
 
+                if ($key === 'hero_video' && ($videoUploaded || empty($value))) {
+                    if (! empty($value)) {
+                        Setting::updateOrCreate(['key' => 'hero_video'], ['value' => (string) $value]);
+                        Setting::updateOrCreate(['key' => 'hero_video_url'], ['value' => (string) $value]);
+                    }
+
+                    continue;
+                }
+
                 if ($key === 'hero_poster_url' && ($posterUploaded || empty($value))) {
                     if (! empty($value)) {
                         Setting::updateOrCreate(['key' => 'hero_poster_url'], ['value' => (string) $value]);
@@ -157,11 +176,6 @@ class SettingController extends Controller
 
                 if ($value === null) {
                     $value = '';
-                }
-
-                // If hero_video was an uploaded file, skip string assignment
-                if ($key === 'hero_video' && $request->hasFile('hero_video')) {
-                    continue;
                 }
 
                 Setting::updateOrCreate(

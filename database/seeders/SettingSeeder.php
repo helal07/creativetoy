@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FrontendContent;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
@@ -31,8 +32,8 @@ class SettingSeeder extends Seeder
             'facebook_url' => 'https://facebook.com/creativetoy',
             'instagram_url' => 'https://instagram.com/creativetoy',
             'tiktok_url' => 'https://tiktok.com/@creativetoy',
-            'hero_video_url' => '',
-            'hero_video' => '',
+            'hero_video_url' => '/uploads/cms/home_hero_hero_video_url_1791801930.mp4',
+            'hero_video' => '/uploads/cms/home_hero_hero_video_url_1791801930.mp4',
             'hero_poster_url' => '/images/toys/hero_banner.jpg',
             'hero_subtitle' => 'SUMMER FUN SALE 2026',
             'hero_title' => 'Discover Joyful Play',
@@ -43,9 +44,26 @@ class SettingSeeder extends Seeder
         ];
 
         foreach ($defaultSettings as $key => $value) {
-            Setting::updateOrCreate(
-                ['key' => $key],
-                ['value' => $value]
+            $existing = Setting::where('key', $key)->first();
+            if (! $existing) {
+                Setting::create([
+                    'key' => $key,
+                    'value' => $value,
+                ]);
+            } elseif ((empty($existing->value) || str_contains((string) $existing->value, '1785931997')) && ! empty($value)) {
+                $existing->update(['value' => $value]);
+            }
+        }
+
+        $heroContent = FrontendContent::where('section', 'home_hero')->where('key', 'hero_video_url')->first();
+        if (! $heroContent || empty($heroContent->value) || str_contains((string) $heroContent->value, '1785931997')) {
+            FrontendContent::updateOrCreate(
+                ['section' => 'home_hero', 'key' => 'hero_video_url'],
+                [
+                    'type' => 'video',
+                    'value' => '/uploads/cms/home_hero_hero_video_url_1791801930.mp4',
+                    'is_file' => true,
+                ]
             );
         }
     }

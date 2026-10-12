@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Setting;
 use App\Models\User;
+use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -111,5 +112,47 @@ class SiteSettingsDynamicTest extends TestCase
         $storeRes->assertStatus(200);
         $storeRes->assertSee('Dynamo Royale');
         $storeRes->assertSee('/custom-favicon.ico');
+    }
+
+    public function test_seeder_sets_toy_hero_video_and_preserves_custom_settings()
+    {
+        // When seeded on fresh DB
+        $this->seed(SettingSeeder::class);
+
+        $videoSetting = Setting::where('key', 'hero_video_url')->first();
+        $this->assertNotNull($videoSetting);
+        $this->assertSame('/uploads/cms/home_hero_hero_video_url_1791801930.mp4', $videoSetting->value);
+
+        // When updated to custom video
+        $videoSetting->update(['value' => '/uploads/videos/custom_user_toy.mp4']);
+
+        // Running seeder again (like on cPanel git deployment) must NOT overwrite custom video
+        $this->seed(SettingSeeder::class);
+
+        $videoSetting->refresh();
+        $this->assertSame('/uploads/videos/custom_user_toy.mp4', $videoSetting->value);
+    }
+
+    public function test_setting_controller_does_not_wipe_video_when_saving_other_settings()
+    {
+        Setting::create(['key' => 'hero_video_url', 'value' => '/uploads/videos/current_video.mp4']);
+        Setting::create(['key' => 'hero_video', 'value' => '/uploads/videos/current_video.mp4']);
+
+        // Saving general settings with empty hero_video fields should not clear existing video
+        $response = $this->post('/admin/settings', [
+            'siteName' => 'Creative Toy Updated',
+            'hero_video' => '',
+            'hero_video_url' => '',
+        ]);
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'hero_video_url',
+            'value' => '/uploads/videos/current_video.mp4',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'hero_video',
+            'value' => '/uploads/videos/current_video.mp4',
+        ]);
     }
 }
