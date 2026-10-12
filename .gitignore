@@ -26,3 +26,5 @@ fixbom.php
 rendered_output*.html
 test_intervention*.php
 tsconfig.tsbuildinfo
+.user.ini
+*.user.ini
