@@ -212,31 +212,42 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/cms', [FrontendCmsController::class, 'update']);
 
     // Split API Settings
-    Route::get('/admin/api-settings/payment', [AdminWebController::class, 'apiPayment']);
-    Route::get('/admin/api-settings/sms', [AdminWebController::class, 'apiSms']);
-    Route::get('/admin/api-settings/courier', [AdminWebController::class, 'apiCourier']);
+    Route::middleware('module.enabled:api_gateway')->group(function () {
+        Route::get('/admin/api-settings/payment', [AdminWebController::class, 'apiPayment']);
+        Route::get('/admin/api-settings/sms', [AdminWebController::class, 'apiSms']);
+        Route::get('/admin/api-settings/courier', [AdminWebController::class, 'apiCourier']);
+        Route::post('/admin/sms/test', [SmsController::class, 'testConnection'])->name('admin.sms.test');
+    });
 
     // Split SEO Settings
-    Route::get('/admin/seo/meta', [AdminWebController::class, 'seoMeta']);
-    Route::get('/admin/seo/marketing', [AdminWebController::class, 'seoMarketing']);
-    Route::get('/admin/seo/ping', [AdminWebController::class, 'seoPing']);
+    Route::middleware('module.enabled:seo')->group(function () {
+        Route::get('/admin/seo/meta', [AdminWebController::class, 'seoMeta']);
+        Route::get('/admin/seo/marketing', [AdminWebController::class, 'seoMarketing']);
+        Route::get('/admin/seo/ping', [AdminWebController::class, 'seoPing']);
+        Route::get('/admin/seo/status', [SeoController::class, 'status'])->name('admin.seo.status');
+        Route::post('/admin/seo/generate-sitemap', [SeoController::class, 'generateSitemap'])->name('admin.seo.sitemap');
+        Route::post('/admin/seo/generate-robots', [SeoController::class, 'generateRobots'])->name('admin.seo.robots');
+        Route::post('/admin/seo/ping-search-engines', [SeoController::class, 'pingSearchEngines'])->name('admin.seo.ping');
+    });
 
     // Courier Hub & Live API Routes
-    Route::get('/admin/courier', [AdminCourierController::class, 'index']);
-    Route::post('/admin/courier/settings', [AdminCourierController::class, 'saveSettings']);
-    Route::post('/admin/courier/save/{key}', [AdminCourierController::class, 'saveSingleCourier']);
-    Route::post('/admin/courier/test-connection', [AdminCourierController::class, 'testConnection']);
-    Route::post('/admin/courier/dispatch', [AdminCourierController::class, 'dispatchOrder']);
-    Route::get('/admin/courier/track/{id}', [AdminCourierController::class, 'trackOrder']);
-    Route::get('/admin/run-migrations', [AdminCourierController::class, 'runMigrations']);
-    Route::get('/admin/courier/run-migrations', [AdminCourierController::class, 'runMigrations']);
+    Route::middleware('module.enabled:courier')->group(function () {
+        Route::get('/admin/courier', [AdminCourierController::class, 'index']);
+        Route::post('/admin/courier/settings', [AdminCourierController::class, 'saveSettings']);
+        Route::post('/admin/courier/save/{key}', [AdminCourierController::class, 'saveSingleCourier']);
+        Route::post('/admin/courier/test-connection', [AdminCourierController::class, 'testConnection']);
+        Route::post('/admin/courier/dispatch', [AdminCourierController::class, 'dispatchOrder']);
+        Route::get('/admin/courier/track/{id}', [AdminCourierController::class, 'trackOrder']);
+        Route::get('/admin/run-migrations', [AdminCourierController::class, 'runMigrations']);
+        Route::get('/admin/courier/run-migrations', [AdminCourierController::class, 'runMigrations']);
 
-    // Courier Charge Settings Routes
-    Route::get('/admin/courier-charges', [CourierChargeController::class, 'index']);
-    Route::post('/admin/courier-charges', [CourierChargeController::class, 'store']);
-    Route::put('/admin/courier-charges/{id}', [CourierChargeController::class, 'update']);
-    Route::delete('/admin/courier-charges/{id}', [CourierChargeController::class, 'destroy']);
-    Route::post('/admin/courier-charges/bulk-update', [CourierChargeController::class, 'bulkUpdate']);
+        // Courier Charge Settings Routes
+        Route::get('/admin/courier-charges', [CourierChargeController::class, 'index']);
+        Route::post('/admin/courier-charges', [CourierChargeController::class, 'store']);
+        Route::put('/admin/courier-charges/{id}', [CourierChargeController::class, 'update']);
+        Route::delete('/admin/courier-charges/{id}', [CourierChargeController::class, 'destroy']);
+        Route::post('/admin/courier-charges/bulk-update', [CourierChargeController::class, 'bulkUpdate']);
+    });
 
     // Menu Builder CRUD Routes
     Route::post('/admin/menus', [AdminWebController::class, 'storeMenu']);
@@ -278,15 +289,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/variants', [VariantController::class, 'store']);
     Route::put('/admin/variants/{id}', [VariantController::class, 'update']);
     Route::delete('/admin/variants/{id}', [VariantController::class, 'destroy']);
-
-    // SMS Gateway Routes
-    Route::post('/admin/sms/test', [SmsController::class, 'testConnection'])->name('admin.sms.test');
-
-    // SEO — Sitemap & Robots Generator Routes
-    Route::get('/admin/seo/status', [SeoController::class, 'status'])->name('admin.seo.status');
-    Route::post('/admin/seo/generate-sitemap', [SeoController::class, 'generateSitemap'])->name('admin.seo.sitemap');
-    Route::post('/admin/seo/generate-robots', [SeoController::class, 'generateRobots'])->name('admin.seo.robots');
-    Route::post('/admin/seo/ping-search-engines', [SeoController::class, 'pingSearchEngines'])->name('admin.seo.ping');
 
     // User Profile & Staff Management Routes
     Route::get('/admin/profile', [AdminProfileController::class, 'index']);

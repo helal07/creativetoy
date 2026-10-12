@@ -155,6 +155,9 @@ class HandleInertiaRequests extends Middleware
                     return [];
                 }
             },
+            'modules' => function () {
+                return config('modules', []);
+            },
         ]);
     }
 }

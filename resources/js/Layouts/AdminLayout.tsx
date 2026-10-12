@@ -55,6 +55,7 @@ interface SharedProps {
     };
     siteSettings?: Record<string, any>;
     cmsData?: any;
+    modules?: Record<string, boolean>;
     [key: string]: any;
 }
 
@@ -73,16 +74,30 @@ export default function AdminLayout({
     pageSubtitle,
     headerActions,
 }: AdminLayoutProps) {
-    const { auth, flash, siteSettings = {}, cmsData = {} } = usePage<SharedProps>().props;
+    const { auth, flash, siteSettings = {}, cmsData = {}, modules = {} } = usePage<SharedProps>().props;
     const currentUser = auth?.user;
+
+    const isCourierEnabled = modules?.courier !== false;
+    const isApiGatewayEnabled = modules?.api_gateway !== false;
+    const isSeoEnabled = modules?.seo !== false;
+    const isPurchasesEnabled = modules?.purchases !== false;
+    const isLandingPagesEnabled = modules?.landing_pages !== false;
+    const isCampaignsEnabled = modules?.campaigns !== false;
+
+    const [devNotice, setDevNotice] = useState<string | null>(null);
+
+    const handleDisabledClick = (moduleName: string) => {
+        setDevNotice(`The "${moduleName}" module is currently under development for MVP release.`);
+        setTimeout(() => setDevNotice(null), 4500);
+    };
 
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(() => {
         if (['orders', 'create_order'].includes(activePage)) return 'orders';
         if (['products', 'product_add', 'categories'].includes(activePage)) return 'product';
-        if (['purchase_list', 'purchase_add'].includes(activePage)) return 'purchase';
-        if (['courier_charges', 'courier'].includes(activePage)) return 'courier';
-        if (['api_payment', 'api_sms', 'api_courier'].includes(activePage)) return 'api_gateway';
-        if (['seo_meta', 'seo_marketing', 'seo_ping', 'sitemap', 'robots'].includes(activePage)) return 'seo_sub';
+        if (['purchase_list', 'purchase_add'].includes(activePage) && modules?.purchases !== false) return 'purchase';
+        if (['courier_charges', 'courier'].includes(activePage) && modules?.courier !== false) return 'courier';
+        if (['api_payment', 'api_sms', 'api_courier'].includes(activePage) && modules?.api_gateway !== false) return 'api_gateway';
+        if (['seo_meta', 'seo_marketing', 'seo_ping', 'sitemap', 'robots'].includes(activePage) && modules?.seo !== false) return 'seo_sub';
         if (['users', 'roles'].includes(activePage)) return 'user_mgmt';
         return null;
     });
@@ -307,6 +322,25 @@ export default function AdminLayout({
                 </div>
             </header>
 
+            {/* Dev Mode Notification Toast */}
+            {devNotice && (
+                <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 bg-slate-900/95 text-white rounded-2xl shadow-2xl border border-amber-400/50 backdrop-blur-md font-semibold text-xs animate-fade-in">
+                    <span className="flex h-2.5 w-2.5 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                    </span>
+                    <span className="text-amber-300 font-bold">MVP Dev Mode:</span>
+                    <span className="text-slate-100">{devNotice}</span>
+                    <button
+                        type="button"
+                        onClick={() => setDevNotice(null)}
+                        className="ml-2 text-slate-400 hover:text-white p-0.5 cursor-pointer"
+                    >
+                        <X className="w-3.5 h-3.5" />
+                    </button>
+                </div>
+            )}
+
             {/* 2. APP WORKSPACE CONTAINER */}
             <div className="flex flex-1 w-full min-h-0 relative overflow-hidden">
                 {/* SIDEBAR NAVIGATION */}
@@ -441,23 +475,32 @@ export default function AdminLayout({
                         <div>
                             <button
                                 type="button"
-                                onClick={() => toggleSubmenu('purchase')}
-                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${['purchase_list', 'purchase_add'].includes(activePage)
-                                    ? 'bg-[#e0f2fe] text-[#0284c7]'
-                                    : 'text-[#475569] hover:bg-[#f1f5f9]'
-                                    }`}
+                                onClick={() => isPurchasesEnabled ? toggleSubmenu('purchase') : handleDisabledClick('Purchases & Stock')}
+                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
+                                    !isPurchasesEnabled
+                                        ? 'opacity-50 hover:opacity-75 bg-slate-50 border border-dashed border-slate-200 text-slate-400 cursor-not-allowed select-none'
+                                        : ['purchase_list', 'purchase_add'].includes(activePage)
+                                            ? 'bg-[#e0f2fe] text-[#0284c7]'
+                                            : 'text-[#475569] hover:bg-[#f1f5f9]'
+                                }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <ShoppingBag className="w-4 h-4" />
                                     <span>Purchases & Stock</span>
                                 </div>
-                                {openSubmenu === 'purchase' ? (
-                                    <ChevronDown className="w-4 h-4" />
+                                {isPurchasesEnabled ? (
+                                    openSubmenu === 'purchase' ? (
+                                        <ChevronDown className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4" />
+                                    )
                                 ) : (
-                                    <ChevronRight className="w-4 h-4" />
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                        Dev Mode
+                                    </span>
                                 )}
                             </button>
-                            {openSubmenu === 'purchase' && (
+                            {isPurchasesEnabled && openSubmenu === 'purchase' && (
                                 <div className="pl-9 pr-2 py-1 space-y-1">
                                     <Link
                                         href="/admin/purchases/list"
@@ -510,23 +553,32 @@ export default function AdminLayout({
                         <div>
                             <button
                                 type="button"
-                                onClick={() => toggleSubmenu('courier')}
-                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${['courier_charges', 'courier'].includes(activePage)
-                                    ? 'bg-[#e0f2fe] text-[#0284c7]'
-                                    : 'text-[#475569] hover:bg-[#f1f5f9]'
-                                    }`}
+                                onClick={() => isCourierEnabled ? toggleSubmenu('courier') : handleDisabledClick('Courier & Delivery')}
+                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
+                                    !isCourierEnabled
+                                        ? 'opacity-50 hover:opacity-75 bg-slate-50 border border-dashed border-slate-200 text-slate-400 cursor-not-allowed select-none'
+                                        : ['courier_charges', 'courier'].includes(activePage)
+                                            ? 'bg-[#e0f2fe] text-[#0284c7]'
+                                            : 'text-[#475569] hover:bg-[#f1f5f9]'
+                                }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <Truck className="w-4 h-4" />
                                     <span>Courier & Rates</span>
                                 </div>
-                                {openSubmenu === 'courier' ? (
-                                    <ChevronDown className="w-4 h-4" />
+                                {isCourierEnabled ? (
+                                    openSubmenu === 'courier' ? (
+                                        <ChevronDown className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4" />
+                                    )
                                 ) : (
-                                    <ChevronRight className="w-4 h-4" />
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                        Dev Mode
+                                    </span>
                                 )}
                             </button>
-                            {openSubmenu === 'courier' && (
+                            {isCourierEnabled && openSubmenu === 'courier' && (
                                 <div className="pl-9 pr-2 py-1 space-y-1">
                                     <Link
                                         href="/admin/courier-charges"
@@ -554,23 +606,32 @@ export default function AdminLayout({
                         <div>
                             <button
                                 type="button"
-                                onClick={() => toggleSubmenu('api_gateway')}
-                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${['api_payment', 'api_sms', 'api_courier'].includes(activePage)
-                                    ? 'bg-[#e0f2fe] text-[#0284c7]'
-                                    : 'text-[#475569] hover:bg-[#f1f5f9]'
-                                    }`}
+                                onClick={() => isApiGatewayEnabled ? toggleSubmenu('api_gateway') : handleDisabledClick('API Gateways')}
+                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
+                                    !isApiGatewayEnabled
+                                        ? 'opacity-50 hover:opacity-75 bg-slate-50 border border-dashed border-slate-200 text-slate-400 cursor-not-allowed select-none'
+                                        : ['api_payment', 'api_sms', 'api_courier'].includes(activePage)
+                                            ? 'bg-[#e0f2fe] text-[#0284c7]'
+                                            : 'text-[#475569] hover:bg-[#f1f5f9]'
+                                }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <Zap className="w-4 h-4" />
                                     <span>API Gateways</span>
                                 </div>
-                                {openSubmenu === 'api_gateway' ? (
-                                    <ChevronDown className="w-4 h-4" />
+                                {isApiGatewayEnabled ? (
+                                    openSubmenu === 'api_gateway' ? (
+                                        <ChevronDown className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4" />
+                                    )
                                 ) : (
-                                    <ChevronRight className="w-4 h-4" />
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                        Dev Mode
+                                    </span>
                                 )}
                             </button>
-                            {openSubmenu === 'api_gateway' && (
+                            {isApiGatewayEnabled && openSubmenu === 'api_gateway' && (
                                 <div className="pl-9 pr-2 py-1 space-y-1">
                                     <Link
                                         href="/admin/api-settings/payment"
@@ -598,23 +659,32 @@ export default function AdminLayout({
                         <div>
                             <button
                                 type="button"
-                                onClick={() => toggleSubmenu('seo_sub')}
-                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${['seo_meta', 'seo_marketing', 'seo_ping', 'sitemap', 'robots'].includes(activePage)
-                                    ? 'bg-[#e0f2fe] text-[#0284c7]'
-                                    : 'text-[#475569] hover:bg-[#f1f5f9]'
-                                    }`}
+                                onClick={() => isSeoEnabled ? toggleSubmenu('seo_sub') : handleDisabledClick('SEO & Marketing')}
+                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
+                                    !isSeoEnabled
+                                        ? 'opacity-50 hover:opacity-75 bg-slate-50 border border-dashed border-slate-200 text-slate-400 cursor-not-allowed select-none'
+                                        : ['seo_meta', 'seo_marketing', 'seo_ping', 'sitemap', 'robots'].includes(activePage)
+                                            ? 'bg-[#e0f2fe] text-[#0284c7]'
+                                            : 'text-[#475569] hover:bg-[#f1f5f9]'
+                                }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <Globe className="w-4 h-4" />
                                     <span>SEO & Marketing</span>
                                 </div>
-                                {openSubmenu === 'seo_sub' ? (
-                                    <ChevronDown className="w-4 h-4" />
+                                {isSeoEnabled ? (
+                                    openSubmenu === 'seo_sub' ? (
+                                        <ChevronDown className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4" />
+                                    )
                                 ) : (
-                                    <ChevronRight className="w-4 h-4" />
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                        Dev Mode
+                                    </span>
                                 )}
                             </button>
-                            {openSubmenu === 'seo_sub' && (
+                            {isSeoEnabled && openSubmenu === 'seo_sub' && (
                                 <div className="pl-9 pr-2 py-1 space-y-1">
                                     <Link
                                         href="/admin/seo/meta"
@@ -745,23 +815,32 @@ export default function AdminLayout({
                         <div>
                             <button
                                 type="button"
-                                onClick={() => toggleSubmenu('landing_pages')}
-                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${activePage === 'landing-pages' || window.location.pathname.includes('/admin/landing-pages')
-                                    ? 'bg-[#e0f2fe] text-[#0284c7]'
-                                    : 'text-[#475569] hover:bg-[#f1f5f9]'
-                                    }`}
+                                onClick={() => isLandingPagesEnabled ? toggleSubmenu('landing_pages') : handleDisabledClick('Landing Pages')}
+                                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
+                                    !isLandingPagesEnabled
+                                        ? 'opacity-50 hover:opacity-75 bg-slate-50 border border-dashed border-slate-200 text-slate-400 cursor-not-allowed select-none'
+                                        : activePage === 'landing-pages' || window.location.pathname.includes('/admin/landing-pages')
+                                            ? 'bg-[#e0f2fe] text-[#0284c7]'
+                                            : 'text-[#475569] hover:bg-[#f1f5f9]'
+                                }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <LayoutTemplate className="w-4 h-4" />
                                     <span>Landing Page</span>
                                 </div>
-                                {openSubmenu === 'landing_pages' ? (
-                                    <ChevronDown className="w-4 h-4" />
+                                {isLandingPagesEnabled ? (
+                                    openSubmenu === 'landing_pages' ? (
+                                        <ChevronDown className="w-4 h-4" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4" />
+                                    )
                                 ) : (
-                                    <ChevronRight className="w-4 h-4" />
+                                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                        Dev Mode
+                                    </span>
                                 )}
                             </button>
-                            {openSubmenu === 'landing_pages' && (
+                            {isLandingPagesEnabled && openSubmenu === 'landing_pages' && (
                                 <div className="pl-9 pr-2 py-1 space-y-1">
                                     <Link
                                         href="/admin/landing-pages/create"
