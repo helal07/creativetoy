@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, Head, usePage } from '@inertiajs/react';
 import ProductCard from '@/Components/ProductCard';
 import {
@@ -11,7 +11,9 @@ import {
   Flame,
   ChevronRight,
   Smile,
-  Sun
+  Sun,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 interface HomePageProps {
@@ -29,6 +31,19 @@ export default function HomePage({
 }: HomePageProps) {
   const { siteSettings, apiSettings, cmsData }: any = usePage().props;
   const settings = siteSettings || apiSettings || {};
+
+  const heroVideo =
+    cmsData?.home_hero?.hero_video_url ||
+    settings?.hero_video_url ||
+    settings?.hero_video ||
+    '/uploads/videos/hero_clip_1785931997.mp4';
+  const heroPoster =
+    settings?.hero_poster_url ||
+    settings?.hero_poster ||
+    '/images/toys/hero_banner.jpg';
+
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const brandName = settings.siteName || 'PlayJoy Toys';
   const tagline = settings.tagline || 'Where Fun & Imagination Begin!';
@@ -175,20 +190,36 @@ export default function HomePage({
               </div>
             </div>
 
-            {/* Right Hero Image */}
-            <div className="col-span-6 relative h-full flex items-center justify-end pr-6 lg:pr-10">
-              <div className="relative w-full h-[440px] lg:h-[480px] rounded-2xl overflow-hidden shadow-sm">
-                <img
-                  src="/images/toys/hero_banner.jpg"
-                  alt="Summer Fun Toys for Kids"
-                  className="w-full h-full object-cover object-center"
+            {/* Right Hero Video Frame (16:9 Aspect Ratio) */}
+            <div className="col-span-6 relative h-full flex items-center justify-end p-6 lg:p-8">
+              <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden shadow-md border-2 border-white/70 bg-slate-900 group">
+                <video
+                  ref={videoRef}
+                  src={heroVideo}
+                  autoPlay
+                  loop
+                  muted={isMuted}
+                  playsInline
+                  poster={heroPoster}
+                  className="w-full h-full object-cover"
                 />
 
                 {/* 30% OFF Circle Sticker */}
-                <div className="absolute top-6 right-6 w-20 h-20 rounded-full bg-[#FF705A] text-white flex flex-col items-center justify-center font-black shadow-lg border-4 border-white rotate-12 animate-pulse">
-                  <span className="text-[20px] leading-none">30%</span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider">OFF!</span>
+                <div className="absolute top-4 right-4 lg:top-6 lg:right-6 w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-[#FF705A] text-white flex flex-col items-center justify-center font-black shadow-lg border-4 border-white rotate-12 animate-pulse pointer-events-none z-10">
+                  <span className="text-[16px] lg:text-[20px] leading-none">30%</span>
+                  <span className="text-[9px] lg:text-[10px] uppercase font-bold tracking-wider">OFF!</span>
                 </div>
+
+                {/* Audio Toggle (Mute / Unmute) Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsMuted(!isMuted)}
+                  className="absolute bottom-3 left-3 z-10 px-2.5 py-1.5 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-xs transition-all shadow-md flex items-center gap-1.5 text-[11px] font-semibold cursor-pointer"
+                  title={isMuted ? "Unmute audio" : "Mute audio"}
+                >
+                  {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                  <span className="hidden sm:inline">{isMuted ? "Sound Off" : "Sound On"}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -223,12 +254,16 @@ export default function HomePage({
             </Link>
           </div>
 
-          {/* Toddler and Toys Picture */}
-          <div className="relative rounded-2xl overflow-hidden shadow-sm mt-2">
-            <img
-              src="/images/toys/mobile_hero.jpg"
-              alt="Toddler with Cute Plush Toys"
-              className="w-full aspect-[4/3] object-cover object-center"
+          {/* Toddler and Toys Video Frame (16:9 Aspect Ratio) */}
+          <div className="relative rounded-2xl overflow-hidden shadow-sm mt-2 aspect-[16/9] bg-slate-900 border border-white/60">
+            <video
+              src={heroVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster={heroPoster}
+              className="w-full h-full object-cover"
             />
           </div>
         </div>

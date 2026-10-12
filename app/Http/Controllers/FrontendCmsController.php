@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\FrontendContent;
 use App\Models\MenuItem;
 use App\Models\Page;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
@@ -98,6 +99,11 @@ class FrontendCmsController extends Controller
                             'is_file' => true,
                         ]
                     );
+
+                    if ($section === 'home_hero' && $key === 'hero_video_url') {
+                        Setting::updateOrCreate(['key' => 'hero_video_url'], ['value' => $filePath]);
+                        Setting::updateOrCreate(['key' => 'hero_video'], ['value' => $filePath]);
+                    }
 
                     continue;
                 }
