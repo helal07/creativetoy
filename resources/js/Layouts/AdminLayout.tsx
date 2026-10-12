@@ -15,6 +15,7 @@ import {
     UserCheck,
     ShieldCheck,
     Settings,
+    Database,
     FileText,
     Globe,
     RefreshCw,
@@ -793,6 +794,16 @@ export default function AdminLayout({
                         >
                             <Settings className="w-4 h-4" />
                             <span>System Settings</span>
+                        </Link>
+                        <Link
+                            href="/admin/backups"
+                            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${activePage === 'backups'
+                                ? 'bg-[#0284c7] text-white shadow-md shadow-[#0284c7]/20'
+                                : 'text-[#475569] hover:bg-[#f1f5f9]'
+                                }`}
+                        >
+                            <Database className="w-4 h-4" />
+                            <span>System Backups</span>
                         </Link>
                     </div>
                 </aside>

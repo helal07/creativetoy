@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\PurchaseController;
@@ -203,6 +204,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/suppliers', [AdminWebController::class, 'suppliers']);
     // Settings & CMS Routes
     Route::get('/admin/settings', [AdminWebController::class, 'settings']);
+    Route::get('/admin/backups', [BackupController::class, 'index'])->name('admin.backups.index');
+    Route::post('/admin/backups/generate', [BackupController::class, 'generate'])->name('admin.backups.generate');
+    Route::get('/admin/backups/download/{filename}', [BackupController::class, 'download'])->name('admin.backups.download');
+    Route::delete('/admin/backups/{filename}', [BackupController::class, 'destroy'])->name('admin.backups.destroy');
     Route::get('/admin/cms', [FrontendCmsController::class, 'index']);
     Route::post('/admin/cms', [FrontendCmsController::class, 'update']);
 
