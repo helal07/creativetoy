@@ -197,9 +197,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/orders/{id}', [AdminWebController::class, 'destroyOrder']);
 
     // Newly Extracted Dashboard Sections
-    Route::get('/admin/purchases', [AdminWebController::class, 'purchaseList']);
-    Route::get('/admin/purchases/list', [AdminWebController::class, 'purchaseList']);
-    Route::get('/admin/purchases/add', [AdminWebController::class, 'purchaseAdd']);
+    Route::middleware('module.enabled:purchases')->group(function () {
+        Route::get('/admin/purchases', [AdminWebController::class, 'purchaseList']);
+        Route::get('/admin/purchases/list', [AdminWebController::class, 'purchaseList']);
+        Route::get('/admin/purchases/add', [AdminWebController::class, 'purchaseAdd']);
+    });
     Route::get('/admin/customers', [AdminWebController::class, 'customers']);
     Route::get('/admin/suppliers', [AdminWebController::class, 'suppliers']);
     // Settings & CMS Routes
@@ -281,8 +283,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/settings', [SettingController::class, 'store'])->name('admin.settings.store');
 
     // Campaigns
-    Route::post('/admin/campaigns/{campaign}/toggle', [CampaignController::class, 'toggle'])->name('campaigns.toggle');
-    Route::resource('admin/campaigns', CampaignController::class);
+    Route::middleware('module.enabled:campaigns')->group(function () {
+        Route::post('/admin/campaigns/{campaign}/toggle', [CampaignController::class, 'toggle'])->name('campaigns.toggle');
+        Route::resource('admin/campaigns', CampaignController::class);
+    });
 
     // Variants
     Route::get('/admin/variants', [VariantController::class, 'index']);
@@ -312,8 +316,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/api/suppliers/{id}', [SupplierController::class, 'destroy']);
 
     // Purchase API Routes
-    Route::post('/admin/api/purchases', [PurchaseController::class, 'store']);
-    Route::delete('/admin/api/purchases/{id}', [PurchaseController::class, 'destroy']);
+    Route::middleware('module.enabled:purchases')->group(function () {
+        Route::post('/admin/api/purchases', [PurchaseController::class, 'store']);
+        Route::delete('/admin/api/purchases/{id}', [PurchaseController::class, 'destroy']);
+    });
 
     // Sale API Routes
     Route::post('/admin/api/sales', [SaleController::class, 'store']);

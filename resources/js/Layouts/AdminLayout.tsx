@@ -798,15 +798,27 @@ export default function AdminLayout({
                                     >
                                         CMS Settings
                                     </Link>
-                                    <Link
-                                        href="/admin/campaigns"
-                                        className={`block px-3 py-2 rounded-lg text-[12px] font-semibold transition-all ${activePage === 'campaigns' || window.location.pathname.includes('/admin/campaigns')
-                                            ? 'bg-[#0284c7] text-white font-bold'
-                                            : 'text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a]'
-                                            }`}
-                                    >
-                                        Campaigns
-                                    </Link>
+                                    {isCampaignsEnabled ? (
+                                        <Link
+                                            href="/admin/campaigns"
+                                            className={`block px-3 py-2 rounded-lg text-[12px] font-semibold transition-all ${activePage === 'campaigns' || window.location.pathname.includes('/admin/campaigns')
+                                                ? 'bg-[#0284c7] text-white font-bold'
+                                                : 'text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a]'
+                                                }`}
+                                        >
+                                            Campaigns
+                                        </Link>
+                                    ) : (
+                                        <div
+                                            onClick={() => handleDisabledClick('Campaigns')}
+                                            className="flex items-center justify-between px-3 py-2 rounded-lg text-[12px] font-semibold text-slate-400 opacity-60 cursor-not-allowed select-none"
+                                        >
+                                            <span>Campaigns</span>
+                                            <span className="px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                                Dev Mode
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

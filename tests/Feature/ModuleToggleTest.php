@@ -53,4 +53,32 @@ class ModuleToggleTest extends TestCase
         // Should not be redirected to dashboard by module.enabled middleware
         $this->assertNotEquals(302, $response->getStatusCode());
     }
+
+    public function test_disabled_purchases_module_redirects_to_dashboard(): void
+    {
+        config(['modules.purchases' => false]);
+
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->get('/admin/purchases');
+
+        $response->assertRedirect('/admin/dashboard');
+        $response->assertSessionHas('error');
+    }
+
+    public function test_disabled_campaigns_module_redirects_to_dashboard(): void
+    {
+        config(['modules.campaigns' => false]);
+
+        $admin = User::factory()->create([
+            'is_admin' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->get('/admin/campaigns');
+
+        $response->assertRedirect('/admin/dashboard');
+        $response->assertSessionHas('error');
+    }
 }

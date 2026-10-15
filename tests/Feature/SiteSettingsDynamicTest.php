@@ -16,7 +16,7 @@ class SiteSettingsDynamicTest extends TestCase
 
     public function test_can_fetch_settings_via_api()
     {
-        Setting::create(['key' => 'siteName', 'value' => 'ReXxo Luxury Bd']);
+        Setting::create(['key' => 'siteName', 'value' => 'Creative Toy']);
         Setting::create(['key' => 'logo_url', 'value' => '/uploads/settings/custom_logo.png']);
         Setting::create(['key' => 'favicon_url', 'value' => '/uploads/settings/custom_favicon.ico']);
 
@@ -24,7 +24,7 @@ class SiteSettingsDynamicTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
-            'siteName' => 'ReXxo Luxury Bd',
+            'siteName' => 'Creative Toy',
             'logo_url' => '/uploads/settings/custom_logo.png',
             'favicon_url' => '/uploads/settings/custom_favicon.ico',
         ]);
